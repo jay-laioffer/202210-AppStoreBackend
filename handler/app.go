@@ -17,6 +17,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err := decoder.Decode(&app); err != nil {
 		panic(err)
 	}
+	service.SaveApp(&app)
 
 	fmt.Fprintf(w, "Upload request received: %s\n", app.Description)
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"reflect"
 
 	"appstore/backend"
@@ -78,4 +79,14 @@ func getAppFromSearchResult(searchResult *elastic.SearchResult) []model.App {
 		apps = append(apps, p)
 	}
 	return apps
+}
+
+func SaveApp(app *model.App) error {
+	productID, priceID, err := backend.CreateProductWithPrice(app.Title, app.Description, int64(app.Price*100))
+	if err != nil {
+		fmt.Printf("Failed to create Product and Price using Stripe SDK %v\n", err)
+		return err
+	}
+	fmt.Printf("Product %s with price %s is successfully created", productID, priceID)
+	return nil
 }

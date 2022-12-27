@@ -2,7 +2,7 @@ package model
 
 type App struct {
 	Id          string `json:"id"`
-	User        string `json:"username"`
+	User        string `json:"user"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Price       int    `json:"price"`

@@ -18,14 +18,14 @@ type ElasticsearchBackend struct {
 }
 
 func InitElasticsearchBackend() {
-	client, err := elastic.NewClient(
+	newClient, err := elastic.NewClient(
 		elastic.SetURL(constants.ES_URL),
 		elastic.SetBasicAuth(constants.ES_USERNAME, constants.ES_PASSWORD))
 	if err != nil {
 		panic(err)
 	}
 
-	exists, err := client.IndexExists(constants.APP_INDEX).Do(context.Background())
+	exists, err := newClient.IndexExists(constants.APP_INDEX).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -43,13 +43,13 @@ func InitElasticsearchBackend() {
                 }
             }
         }`
-		_, err := client.CreateIndex(constants.APP_INDEX).Body(mapping).Do(context.Background())
+		_, err := newClient.CreateIndex(constants.APP_INDEX).Body(mapping).Do(context.Background())
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	exists, err = client.IndexExists(constants.USER_INDEX).Do(context.Background())
+	exists, err = newClient.IndexExists(constants.USER_INDEX).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -65,14 +65,14 @@ func InitElasticsearchBackend() {
                          }
                     }
                 }`
-		_, err = client.CreateIndex(constants.USER_INDEX).Body(mapping).Do(context.Background())
+		_, err = newClient.CreateIndex(constants.USER_INDEX).Body(mapping).Do(context.Background())
 		if err != nil {
 			panic(err)
 		}
 	}
 	fmt.Println("Indexes are created.")
 
-	ESBackend = &ElasticsearchBackend{client: client}
+	ESBackend = &ElasticsearchBackend{client: newClient}
 }
 
 func (backend *ElasticsearchBackend) ReadFromES(query elastic.Query, index string) (*elastic.SearchResult, error) {
