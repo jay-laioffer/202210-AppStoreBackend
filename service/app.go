@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"mime/multipart"
 	"reflect"
 
 	"appstore/backend"
@@ -81,12 +82,28 @@ func getAppFromSearchResult(searchResult *elastic.SearchResult) []model.App {
 	return apps
 }
 
-func SaveApp(app *model.App) error {
-	productID, priceID, err := backend.CreateProductWithPrice(app.Title, app.Description, int64(app.Price*100))
+func SaveApp(app *model.App, file multipart.File) error {
+	productID, priceID, err := backend.CreateProductWithPrice(app.Title, app.Description, int64(app.Price))
 	if err != nil {
 		fmt.Printf("Failed to create Product and Price using Stripe SDK %v\n", err)
 		return err
 	}
+	app.ProductID = productID
+	app.PriceID = priceID
 	fmt.Printf("Product %s with price %s is successfully created", productID, priceID)
+
+	medialink, err := backend.GCSBackend.SaveToGCS(file, app.Id)
+	if err != nil {
+		return err
+	}
+	app.Url = medialink
+
+	err = backend.ESBackend.SaveToES(app, constants.APP_INDEX, app.Id)
+	if err != nil {
+		fmt.Printf("Failed to save app to elastic search with app index %v\n", err)
+		return err
+	}
+	fmt.Println("App is saved successfully to ECS app index.")
+
 	return nil
 }
