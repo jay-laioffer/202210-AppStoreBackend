@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"mime/multipart"
 	"reflect"
@@ -10,6 +11,7 @@ import (
 	"appstore/model"
 
 	"github.com/olivere/elastic/v7"
+	"github.com/stripe/stripe-go/v74"
 )
 
 func SearchApps(title string, description string) ([]model.App, error) {
@@ -106,4 +108,15 @@ func SaveApp(app *model.App, file multipart.File) error {
 	fmt.Println("App is saved successfully to ECS app index.")
 
 	return nil
+}
+
+func CheckoutApp(domain string, appID string) (*stripe.CheckoutSession, error) {
+	app, err := SearchAppsByID(appID)
+	if err != nil {
+		return nil, err
+	}
+	if app == nil {
+		return nil, errors.New("unable to find app in elasticsearch")
+	}
+	return backend.CreateCheckoutSession(domain, app.PriceID)
 }

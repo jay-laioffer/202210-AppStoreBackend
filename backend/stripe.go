@@ -39,15 +39,13 @@ func CreateProductWithPrice(appTitle string, appDescription string, appPrice int
 	return newProduct.ID, newPrice.ID, nil
 }
 
-func CreateCheckoutSession(domain string) (*stripe.CheckoutSession, error) {
-
-	PRICE_ID := ""
+func CreateCheckoutSession(domain string, priceID string) (*stripe.CheckoutSession, error) {
 
 	stripe.Key = constants.STRIPE_API_KEY
 	params := &stripe.CheckoutSessionParams{
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
-				Price:    &PRICE_ID,
+				Price:    &priceID,
 				Quantity: stripe.Int64(1),
 			},
 		},
