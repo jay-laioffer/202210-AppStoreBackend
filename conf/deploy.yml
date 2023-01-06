@@ -1,10 +1,10 @@
 elasticsearch:
-  address: "http://104.154.71.200:9200"
-  username: "jay"
-  password: "welcome"
+  address: "YOUR_ELASTICSEARCH_ADDRESS"
+  username: "YOUR_ELASTICSEARCH_USERNAME"
+  password: "YOUR_ELASTICSEARCH_PASSWORD"
 
 gcs:
-  bucket: "around-jay-bucket"
+  bucket: "YOUR_GCS_BUCKET_NAME"
 
 token:
   secret: "secret"

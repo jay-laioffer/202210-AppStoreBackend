@@ -3,9 +3,9 @@ package constants
 const (
 	APP_INDEX      = "app"
 	USER_INDEX     = "user"
-	ES_URL         = "http://104.154.71.200:9200"
-	ES_USERNAME    = "jay"
-	ES_PASSWORD    = "welcome"
-	STRIPE_API_KEY = "sk_test_51MDytNAAmwnofvmwxDhvuTRvDyaYy2LvXhqMXgy6o95DBMoeO0Lb3dCRV5UqWADpK3rxnO6DupnH6So7a8Jdsfr300boerLann"
-	GCS_BUCKET     = "around-jay-bucket123"
+	ES_URL         = "http://YOUR_GCE_INTERNAL_IP_ADDRES:9200"
+	ES_USERNAME    = "YOUR_ELASTICSEARCH_USERNAME"
+	ES_PASSWORD    = "YOUR_ELASTICSEARCH_PASSWORD"
+	STRIPE_API_KEY = "YOUR_STRIPE_SECRET_KEY"
+	GCS_BUCKET     = "YOUR_GCS_BUCKET"
 )
