@@ -1,0 +1,10 @@
+elasticsearch:
+  address: "http://104.154.71.200:9200"
+  username: "jay"
+  password: "welcome"
+
+gcs:
+  bucket: "around-jay-bucket"
+
+token:
+  secret: "secret"

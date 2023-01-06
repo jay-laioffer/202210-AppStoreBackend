@@ -4,16 +4,21 @@ go 1.19
 
 require (
 	cloud.google.com/go/storage v1.28.1
+	github.com/auth0/go-jwt-middleware v1.0.1
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/olivere/elastic/v7 v7.0.32
 	github.com/stripe/stripe-go/v74 v74.4.0
 )
+
+require github.com/felixge/httpsnoop v1.0.1 // indirect
 
 require (
 	cloud.google.com/go v0.105.0 // indirect
 	cloud.google.com/go/compute v1.12.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.1 // indirect
 	cloud.google.com/go/iam v0.7.0 // indirect
+	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
@@ -35,4 +40,5 @@ require (
 	google.golang.org/genproto v0.0.0-20221201164419-0e50fba7f41c // indirect
 	google.golang.org/grpc v1.50.1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )

@@ -85,6 +85,7 @@ func getAppFromSearchResult(searchResult *elastic.SearchResult) []model.App {
 }
 
 func SaveApp(app *model.App, file multipart.File) error {
+
 	productID, priceID, err := backend.CreateProductWithPrice(app.Title, app.Description, int64(app.Price))
 	if err != nil {
 		fmt.Printf("Failed to create Product and Price using Stripe SDK %v\n", err)
@@ -96,6 +97,7 @@ func SaveApp(app *model.App, file multipart.File) error {
 
 	medialink, err := backend.GCSBackend.SaveToGCS(file, app.Id)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	app.Url = medialink
@@ -105,9 +107,11 @@ func SaveApp(app *model.App, file multipart.File) error {
 		fmt.Printf("Failed to save app to elastic search with app index %v\n", err)
 		return err
 	}
-	fmt.Println("App is saved successfully to ECS app index.")
+
+	fmt.Println("App is saved successfully to ES app index.")
 
 	return nil
+
 }
 
 func CheckoutApp(domain string, appID string) (*stripe.CheckoutSession, error) {
@@ -118,5 +122,14 @@ func CheckoutApp(domain string, appID string) (*stripe.CheckoutSession, error) {
 	if app == nil {
 		return nil, errors.New("unable to find app in elasticsearch")
 	}
+
 	return backend.CreateCheckoutSession(domain, app.PriceID)
+}
+
+func DeleteApp(id string, user string) error {
+	query := elastic.NewBoolQuery()
+	query.Must(elastic.NewTermQuery("id", id))
+	query.Must(elastic.NewTermQuery("user", user))
+
+	return backend.ESBackend.DeleteFromES(query, constants.APP_INDEX)
 }

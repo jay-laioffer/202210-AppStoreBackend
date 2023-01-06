@@ -5,9 +5,10 @@ import (
 	"fmt"
 
 	"github.com/stripe/stripe-go/v74"
-	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/stripe/stripe-go/v74/price"
 	"github.com/stripe/stripe-go/v74/product"
+
+	"github.com/stripe/stripe-go/v74/checkout/session"
 )
 
 func CreateProductWithPrice(appTitle string, appDescription string, appPrice int64) (productID, priceID string, err error) {

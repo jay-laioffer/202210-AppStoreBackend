@@ -9,10 +9,16 @@ import (
 	"appstore/model"
 	"appstore/service"
 
+	jwt "github.com/form3tech-oss/jwt-go"
 	"github.com/pborman/uuid"
+
+	"github.com/gorilla/mux"
 )
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Received one upload request")
+
 	// Parse from body of request to get a json object.
 	fmt.Println("Received one upload request")
 
@@ -24,7 +30,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	price, err := strconv.ParseFloat(r.FormValue("price"), 64)
-	fmt.Printf("%v,%T", price, price)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -37,7 +42,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	service.SaveApp(&app, file)
+	err = service.SaveApp(&app, file)
 	if err != nil {
 		http.Error(w, "Failed to save app to backend", http.StatusInternalServerError)
 		fmt.Printf("Failed to save app to backend %v\n", err)
@@ -46,6 +51,45 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "App is saved successfully: %s\n", app.Description)
 }
+
+// func uploadHandler(w http.ResponseWriter, r *http.Request) {
+// 	// Parse from body of request to get a json object.
+// 	fmt.Println("Received one upload request")
+
+// 	user := r.Context().Value("user")
+// 	claims := user.(*jwt.Token).Claims
+// 	username := claims.(jwt.MapClaims)["username"]
+
+// 	app := model.App{
+// 		Id:          uuid.New(),
+// 		User:        username.(string),
+// 		Title:       r.FormValue("title"),
+// 		Description: r.FormValue("description"),
+// 	}
+
+// 	price, err := strconv.ParseFloat(r.FormValue("price"), 64)
+// 	fmt.Printf("%v,%T", price, price)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	app.Price = int(price * 100.0)
+
+// 	file, _, err := r.FormFile("media_file")
+// 	if err != nil {
+// 		http.Error(w, "Media file is not available", http.StatusBadRequest)
+// 		fmt.Printf("Media file is not available %v\n", err)
+// 		return
+// 	}
+
+// 	err = service.SaveApp(&app, file)
+// 	if err != nil {
+// 		http.Error(w, "Failed to save app to backend", http.StatusInternalServerError)
+// 		fmt.Printf("Failed to save app to backend %v\n", err)
+// 		return
+// 	}
+
+// 	fmt.Fprintf(w, "App is saved successfully: %s\n", app.Description)
+// }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Received one search request")
@@ -72,9 +116,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 func checkoutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Received one checkout request")
 	w.Header().Set("Content-Type", "text/plain")
-	if r.Method == "OPTIONS" {
-		return
-	}
 	appID := r.FormValue("appID")
 	s, err := service.CheckoutApp(r.Header.Get("Origin"), appID)
 	if err != nil {
@@ -86,5 +127,21 @@ func checkoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(s.URL))
 
-	fmt.Println("Checkout succeed!")
+	fmt.Println("Checkout process started!")
+}
+
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Received one request for delete")
+
+	user := r.Context().Value("user")
+	claims := user.(*jwt.Token).Claims
+	username := claims.(jwt.MapClaims)["username"].(string)
+	id := mux.Vars(r)["id"]
+
+	if err := service.DeleteApp(id, username); err != nil {
+		http.Error(w, "Failed to delete app from backend", http.StatusInternalServerError)
+		fmt.Printf("Failed to delete app from backend %v\n", err)
+		return
+	}
+	fmt.Println("App is deleted successfully")
 }
